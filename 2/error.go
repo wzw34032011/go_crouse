@@ -2,7 +2,7 @@ package main
 
 import (
 	"database/sql"
-	xerrors "github.com/pkg/errors"
+	"github.com/pkg/errors"
 	"log"
 )
 
@@ -20,7 +20,7 @@ func Dao() (string, error) {
 	default:
 		de = nil
 	}
-	return name.String, xerrors.Wrap(de, "dao error")
+	return name.String, errors.Wrap(de, "dao error")
 }
 
 func Service() (string, error) {
@@ -28,14 +28,14 @@ func Service() (string, error) {
 	if err != nil {
 		var se *ServiceError
 		var de *DaoError
-		if xerrors.As(err, &de) && de.IsEmptyRow() {
+		if errors.As(err, &de) && de.IsEmptyRow() {
 			//空数据错误
 			se = &ServiceError{code: 1, msg: "未查询到数据", err: err}
 		} else {
 			//其他错误
 			se = &ServiceError{code: 2, msg: "服务异常", err: err}
 		}
-		return name, xerrors.Wrap(se, "service error")
+		return name, errors.Wrap(se, "service error")
 	}
 	return name, nil
 }
@@ -46,7 +46,7 @@ func Handler() Response {
 		log.Printf("stack trace:\n%+v\n", err)
 
 		var se *ServiceError
-		if xerrors.As(err, &se) {
+		if errors.As(err, &se) {
 			return Response{code: se.code, msg: se.Error(), data: ResponseData{name: name}}
 		} else {
 			panic("error invalid")
