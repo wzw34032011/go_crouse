@@ -3,8 +3,9 @@ package main
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	xerrors "github.com/pkg/errors"
+	"log"
 )
 
 func Dao() (string, error) {
@@ -21,8 +22,7 @@ func Dao() (string, error) {
 	default:
 		de = nil
 	}
-
-	return name.String, de
+	return name.String, xerrors.Wrap(de, "dao error")
 }
 
 func Service() (string, error) {
@@ -37,7 +37,7 @@ func Service() (string, error) {
 			//其他错误
 			se = &ServiceError{code: 2, msg: "服务异常", err: err}
 		}
-		return name, se
+		return name, xerrors.Wrap(se, "service error")
 	}
 	return name, nil
 }
@@ -45,10 +45,10 @@ func Service() (string, error) {
 func Handler() Response {
 	name, err := Service()
 	if err != nil {
+		log.Printf("stack trace:\n%+v\n", err)
+
 		var se *ServiceError
 		if errors.As(err, &se) {
-			//打日志
-
 			return Response{code: se.code, msg: se.Error(), data: ResponseData{name: name}}
 		} else {
 			panic("error invalid")
@@ -66,7 +66,7 @@ type ServiceError struct {
 }
 
 func (se *ServiceError) Error() string {
-	return fmt.Sprintf("ServiceError code: %d,msg: %s.\n", se.code, se.msg)
+	return se.msg
 }
 
 func (se *ServiceError) Unwrap() error {
