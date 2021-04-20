@@ -29,12 +29,13 @@ func Service() (string, error) {
 	name, err := Dao()
 	if err != nil {
 		var se *ServiceError
-		if de, ok := err.(*DaoError); ok && de.IsEmptyRow() {
+		var de *DaoError
+		if errors.As(err, &de) && de.IsEmptyRow() {
 			//空数据错误
-			se = &ServiceError{code: 1, msg: "未查询到数据", err: de}
+			se = &ServiceError{code: 1, msg: "未查询到数据", err: err}
 		} else {
 			//其他错误
-			se = &ServiceError{code: 2, msg: "服务异常", err: de}
+			se = &ServiceError{code: 2, msg: "服务异常", err: err}
 		}
 		return name, se
 	}
@@ -44,8 +45,10 @@ func Service() (string, error) {
 func Handler() Response {
 	name, err := Service()
 	if err != nil {
-		se := &ServiceError{}
+		var se *ServiceError
 		if errors.As(err, &se) {
+			//打日志
+
 			return Response{code: se.code, msg: se.Error(), data: ResponseData{name: name}}
 		} else {
 			panic("error invalid")
@@ -68,11 +71,6 @@ func (se *ServiceError) Error() string {
 
 func (se *ServiceError) Unwrap() error {
 	return se.err
-}
-
-func (se *ServiceError) Is(target error) bool {
-	_, ok := target.(*ServiceError)
-	return ok
 }
 
 // Dao层错误
