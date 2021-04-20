@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"errors"
-	_ "github.com/go-sql-driver/mysql"
 	xerrors "github.com/pkg/errors"
 	"log"
 )
