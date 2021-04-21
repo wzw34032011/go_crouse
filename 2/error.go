@@ -33,7 +33,7 @@ func Service() error {
 			//空数据错误
 			if canHandle := false; canHandle {
 				//处理错误代码,降级业务流程
-				err = nil
+				return nil
 			} else {
 				//无法处理错误，返回给调用者
 				return errors.Wrap(err, "未查询到数据")
@@ -42,7 +42,7 @@ func Service() error {
 			//其他错误
 			if canHandle := false; canHandle {
 				//处理错误代码,降级业务流程
-				err = nil
+				return nil
 			} else {
 				//无法处理错误，返回给调用者
 				return errors.Wrap(err, "Dao 异常")
