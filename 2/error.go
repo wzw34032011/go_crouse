@@ -43,7 +43,7 @@ func Dao() error {
 		de = &DaoError{msg: "query err", emptyRow: false, err: err}
 		err2 = errors.Wrap(de, "dao error")
 	default:
-		de = nil
+		err2 = nil
 	}
 	return err2
 }
