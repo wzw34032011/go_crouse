@@ -13,6 +13,10 @@ type DaoError struct {
 	err      error
 }
 
+func (de *DaoError) Cause() error {
+	return de.err
+}
+
 func (de *DaoError) Unwrap() error {
 	return de.err
 }
@@ -34,10 +38,10 @@ func Dao() error {
 	switch {
 	case err == sql.ErrNoRows:
 		de = &DaoError{msg: "query not find", emptyRow: true, err: err}
-		err2 = errors.Wrap(de, "dao err2")
+		err2 = errors.Wrap(de, "dao error")
 	case err != nil:
 		de = &DaoError{msg: "query err", emptyRow: false, err: err}
-		err2 = errors.Wrap(de, "dao err2")
+		err2 = errors.Wrap(de, "dao error")
 	default:
 		de = nil
 	}
