@@ -7,8 +7,8 @@ import (
 )
 
 func Dao() error {
-	//var err = sql.ErrNoRows
-	var err = sql.ErrConnDone
+	var err = sql.ErrNoRows
+	//var err = sql.ErrConnDone
 
 	var de *DaoError
 	var err2 error
@@ -52,21 +52,6 @@ func Service() error {
 	//正常业务流程
 
 	return err
-}
-
-// service层错误
-type ServiceError struct {
-	code int
-	msg  string
-	err  error
-}
-
-func (se *ServiceError) Error() string {
-	return se.msg
-}
-
-func (se *ServiceError) Unwrap() error {
-	return se.err
 }
 
 // Dao层错误
