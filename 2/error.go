@@ -6,6 +6,25 @@ import (
 	"log"
 )
 
+// Dao层错误
+type DaoError struct {
+	msg      string
+	emptyRow bool
+	err      error
+}
+
+func (de *DaoError) Unwrap() error {
+	return de.err
+}
+
+func (de *DaoError) Error() string {
+	return de.msg
+}
+
+func (de *DaoError) IsEmptyRow() bool {
+	return de.emptyRow
+}
+
 func Dao() error {
 	var err = sql.ErrNoRows
 	//var err = sql.ErrConnDone
@@ -52,25 +71,6 @@ func Service() error {
 	//正常业务流程
 
 	return err
-}
-
-// Dao层错误
-type DaoError struct {
-	msg      string
-	emptyRow bool
-	err      error
-}
-
-func (de *DaoError) Unwrap() error {
-	return de.err
-}
-
-func (de *DaoError) Error() string {
-	return de.msg
-}
-
-func (de *DaoError) IsEmptyRow() bool {
-	return de.emptyRow
 }
 
 func main() {
