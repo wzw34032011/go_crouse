@@ -6,54 +6,52 @@ import (
 	"log"
 )
 
-func Dao() (string, error) {
-	var name sql.NullString
-	var DB sql.DB
-	err := DB.QueryRow("SELECT name FROM user WHERE id=1").Scan(&name)
+func Dao() error {
+	//var err = sql.ErrNoRows
+	var err = sql.ErrConnDone
 
 	var de *DaoError
+	var err2 error
 	switch {
 	case err == sql.ErrNoRows:
 		de = &DaoError{msg: "query not find", emptyRow: true, err: err}
+		err2 = errors.Wrap(de, "dao err2")
 	case err != nil:
-		de = &DaoError{msg: "query error", emptyRow: false, err: err}
+		de = &DaoError{msg: "query err", emptyRow: false, err: err}
+		err2 = errors.Wrap(de, "dao err2")
 	default:
 		de = nil
 	}
-	return name.String, errors.Wrap(de, "dao error")
+	return err2
 }
 
-func Service() (string, error) {
-	name, err := Dao()
+func Service() error {
+	err := Dao()
 	if err != nil {
-		var se *ServiceError
 		var de *DaoError
 		if errors.As(err, &de) && de.IsEmptyRow() {
 			//空数据错误
-			se = &ServiceError{code: 1, msg: "未查询到数据", err: err}
+			if canHandle := false; canHandle {
+				//处理错误代码,降级业务流程
+				err = nil
+			} else {
+				//无法处理错误，返回给调用者
+				return errors.Wrap(err, "未查询到数据")
+			}
 		} else {
 			//其他错误
-			se = &ServiceError{code: 2, msg: "服务异常", err: err}
-		}
-		return name, errors.Wrap(se, "service error")
-	}
-	return name, nil
-}
-
-func Handler() Response {
-	name, err := Service()
-	if err != nil {
-		log.Printf("stack trace:\n%+v\n", err)
-
-		var se *ServiceError
-		if errors.As(err, &se) {
-			return Response{code: se.code, msg: se.Error(), data: ResponseData{name: name}}
-		} else {
-			panic("error invalid")
+			if canHandle := false; canHandle {
+				//处理错误代码,降级业务流程
+				err = nil
+			} else {
+				//无法处理错误，返回给调用者
+				return errors.Wrap(err, "Dao 异常")
+			}
 		}
 	}
+	//正常业务流程
 
-	return Response{code: 0, msg: "", data: ResponseData{name: name}}
+	return err
 }
 
 // service层错误
@@ -90,16 +88,12 @@ func (de *DaoError) IsEmptyRow() bool {
 	return de.emptyRow
 }
 
-type Response struct {
-	code int
-	msg  string
-	data ResponseData
-}
-
-type ResponseData struct {
-	name string
-}
-
 func main() {
-	Handler()
+	err := Service()
+	if err != nil {
+		log.Printf("stack trace:\n%+v\n", err)
+		log.Printf("original error: %v", errors.Cause(err))
+	} else {
+		log.Println("success")
+	}
 }
