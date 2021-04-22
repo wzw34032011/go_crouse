@@ -28,23 +28,35 @@ func (de *MyError) IsEmptyRow() bool {
 	return de.emptyRow
 }
 
+func WrapStackOnce(err error, message string) error {
+	if err == nil {
+		return nil
+	}
+	//如果err包含过withStack,就不使用wrap重复记录stack了
+	if e, ok := err.(interface{ StackTrace() errors.StackTrace }); ok {
+		return errors.WithMessage(e.(error), message)
+	} else {
+		return errors.Wrap(err, message)
+	}
+}
+
 func Dao() error {
 	var err = sql.ErrNoRows
 	//var err = sql.ErrConnDone
 
-	var de *MyError
-	var err2 error
+	var me *MyError
+	var we error
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
-		de = &MyError{msg: "query not find", emptyRow: true, err: err}
-		err2 = errors.Wrap(de, "dao error")
+		me = &MyError{msg: "query not find", emptyRow: true, err: err}
+		we = WrapStackOnce(me, "dao we")
 	case err != nil:
-		de = &MyError{msg: "query err", emptyRow: false, err: err}
-		err2 = errors.Wrap(de, "dao error")
+		me = &MyError{msg: "query err", emptyRow: false, err: err}
+		we = WrapStackOnce(me, "dao we")
 	default:
-		err2 = nil
+		we = nil
 	}
-	return err2
+	return we
 }
 
 func Service() error {
@@ -58,7 +70,7 @@ func Service() error {
 				return nil
 			} else {
 				//无法处理错误，返回给调用者
-				return errors.WithMessage(err, "未查询到数据")
+				return WrapStackOnce(err, "未查询到数据")
 			}
 		} else {
 			//其他错误
@@ -67,13 +79,13 @@ func Service() error {
 				return nil
 			} else {
 				//无法处理错误，返回给调用者
-				return errors.WithMessage(err, "Dao 异常")
+				return WrapStackOnce(err, "Dao 异常")
 			}
 		}
 	}
 
 	//正常业务流程
-	return errors.WithMessage(err, "其他业务错误")
+	return WrapStackOnce(err, "其他业务错误")
 }
 
 func main() {
