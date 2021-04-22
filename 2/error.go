@@ -36,7 +36,7 @@ func Dao() error {
 	var de *DaoError
 	var err2 error
 	switch {
-	case err == sql.ErrNoRows:
+	case errors.Is(err, sql.ErrNoRows):
 		de = &DaoError{msg: "query not find", emptyRow: true, err: err}
 		err2 = errors.Wrap(de, "dao error")
 	case err != nil:
