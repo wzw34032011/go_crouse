@@ -71,9 +71,9 @@ func Service() error {
 			}
 		}
 	}
-	//正常业务流程
 
-	return nil
+	//正常业务流程
+	return errors.WithMessage(err, "其他业务错误")
 }
 
 func main() {
