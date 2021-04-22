@@ -62,8 +62,8 @@ func Dao() error {
 func Service() error {
 	err := Dao()
 	if err != nil {
-		var de *MyError
-		if errors.As(err, &de) && de.IsEmptyRow() {
+		var me *MyError
+		if errors.As(err, &me) && me.IsEmptyRow() {
 			//空数据错误
 			if canHandle := false; canHandle {
 				//处理错误代码,降级业务流程
