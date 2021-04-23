@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"github.com/pkg/errors"
 	"log"
@@ -37,8 +38,8 @@ func (de *DaoError) IsEmptyRow() bool {
 }
 
 type ServiceError struct {
-	code int
-	msg  string
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
 	err  error
 }
 
@@ -51,7 +52,7 @@ func (se *ServiceError) Unwrap() error {
 }
 
 func (se *ServiceError) Error() string {
-	return fmt.Sprintf("code:%d,msg:%s", se.code, se.msg)
+	return fmt.Sprintf("Code:%d,Msg:%s", se.Code, se.Msg)
 }
 
 func (se *ServiceError) Is(tag error) bool {
@@ -101,8 +102,8 @@ func Service() (string, error) {
 			if returnError := true; returnError {
 				//错误上抛
 				se := &ServiceError{
-					code: 1,
-					msg:  "未查询到数据",
+					Code: 1,
+					Msg:  "未查询到数据",
 					err:  err,
 				}
 				return data, WrapStackOnce(se, "service error")
@@ -120,21 +121,28 @@ func Service() (string, error) {
 	return data, nil
 }
 
-func main() {
-	data, err := Service()
-	if err != nil {
-		if !errors.Is(err, new(ServiceError)) {
-			//错误无法处理，写log
-			log.Printf("stack trace:\n%+v\n", err)
-			log.Printf("original error: %v", errors.Cause(err))
+func handleError(err error) {
+	if err == nil {
+		return
+	}
 
-			err = &ServiceError{
-				code: 2,
-				msg:  "unknown error",
-				err:  err,
-			}
+	var se *ServiceError
+	if !errors.As(err, &se) {
+		se = &ServiceError{
+			Code: 2,
+			Msg:  "InternalServerError",
+			err:  err,
 		}
 	}
 
-	fmt.Printf("data=%s\nerr=%v", data, err)
+	data, _ := json.Marshal(se)
+	log.Println(string(data))
+	log.Printf("stack trace:\n%+v\n", err)
+	log.Printf("original error: %v", errors.Cause(err))
+}
+
+func main() {
+	data, err := Service()
+	handleError(err)
+	fmt.Println(data)
 }
