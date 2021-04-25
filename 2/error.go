@@ -128,6 +128,10 @@ func handleError(err error) {
 
 	var se *ServiceError
 	if !errors.As(err, &se) {
+		//异常错误写log（sql.ErrConnDone）
+		log.Printf("stack trace:\n%+v\n", err)
+		log.Printf("original error: %v", errors.Cause(err))
+
 		se = &ServiceError{
 			Code: 2,
 			Msg:  "InternalServerError",
@@ -135,10 +139,8 @@ func handleError(err error) {
 		}
 	}
 
-	data, _ := json.Marshal(se)
-	log.Println(string(data))
-	log.Printf("stack trace:\n%+v\n", err)
-	log.Printf("original error: %v", errors.Cause(err))
+	serror, _ := json.Marshal(se)
+	log.Println(string(serror))
 }
 
 func main() {
