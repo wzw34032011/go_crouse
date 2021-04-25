@@ -100,7 +100,7 @@ func Service() (string, error) {
 		if errors.As(err, &de) && de.IsEmptyRow() {
 			//空数据错误
 			if returnError := true; returnError {
-				//错误上抛
+				//可被处理的错误，返回错误码
 				se := &ServiceError{
 					Code: 1,
 					Msg:  "未查询到数据",
@@ -112,7 +112,7 @@ func Service() (string, error) {
 				return "兜底数据", nil
 			}
 		} else {
-			//无法处理错误，错误上抛
+			//无法处理的错误，错误上抛
 			return data, WrapStackOnce(err, "service error")
 		}
 	}
