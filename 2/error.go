@@ -16,9 +16,9 @@ import (
 // 情况一和二都返回了一样的空值，如果不上抛错误，上层无法得知数据是否存在
 
 type DaoError struct {
-	msg      string
-	emptyRow bool
-	err      error
+	msg       string
+	errorType int //1=emptyRow 2=otherError
+	err       error
 }
 
 func (de *DaoError) Cause() error {
@@ -34,7 +34,7 @@ func (de *DaoError) Error() string {
 }
 
 func (de *DaoError) IsEmptyRow() bool {
-	return de.emptyRow
+	return de.errorType == 1
 }
 
 type ServiceError struct {
@@ -81,10 +81,10 @@ func Dao() (string, error) {
 	var we error = nil
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			de = &DaoError{msg: "query not find", emptyRow: true, err: err}
+			de = &DaoError{msg: "data not find", errorType: 1, err: err}
 			we = WrapStackOnce(de, "dao error")
 		} else {
-			de = &DaoError{msg: "connect err", emptyRow: false, err: err}
+			de = &DaoError{msg: "connect err", errorType: 2, err: err}
 			we = WrapStackOnce(de, "dao error")
 		}
 	} else {
