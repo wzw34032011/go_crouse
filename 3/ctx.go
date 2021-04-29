@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 )
@@ -27,34 +28,43 @@ func init() {
 type service struct {
 	name     string
 	stopChan chan struct{}
+	isClose  bool
 	err      error
+	sync.Mutex
 }
 
 func NewService(name string) *service {
 	return &service{name: name, stopChan: make(chan struct{}), err: nil}
 }
 
-func (s service) Start() error {
-	//return errors.New("启动异常")
+func (s *service) Start() error {
 	log.Printf("%s启动中...", s.name)
 
 	for {
 		time.Sleep(time.Second)
-		//do service
 		log.Printf("%s running...", s.name)
+		//s.err = errors.New("运行异常")
 
 		select {
 		case <-s.stopChan:
 			log.Printf("%s已关闭", s.name)
 			return s.err
 		default:
+			if s.err != nil {
+				_ = s.Stop()
+			}
 		}
 	}
 }
 
-func (s service) Stop() error {
-	log.Printf("%s关闭中...", s.name)
-	close(s.stopChan)
+func (s *service) Stop() error {
+	s.Lock()
+	defer s.Unlock()
+	if s.isClose == false {
+		log.Printf("%s关闭中...", s.name)
+		close(s.stopChan)
+		s.isClose = true
+	}
 	return nil
 }
 
@@ -83,6 +93,7 @@ func main() {
 		return s2.Stop()
 	})
 
+	//信号处理
 	g.Go(func() error {
 		for {
 			select {
@@ -91,7 +102,7 @@ func main() {
 				case os.Interrupt, os.Kill, syscall.SIGTERM, syscall.SIGINT:
 					rootCancel()
 				default:
-					log.Println("undefined s")
+					log.Println("undefined signal")
 				}
 			case <-ctx.Done():
 				return ctx.Err()
