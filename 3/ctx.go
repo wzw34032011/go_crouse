@@ -68,30 +68,30 @@ func (s *service) Stop() error {
 	return nil
 }
 
+func NewServiceList(names ...string) []*service {
+	var serviceList []*service
+	for _, name := range names {
+		name := name
+		serviceList = append(serviceList, NewService(name))
+	}
+	return serviceList
+}
+
 func main() {
 	rootCtx, rootCancel := context.WithCancel(context.Background())
 	g, ctx := errgroup.WithContext(rootCtx)
 
-	s1 := NewService("service A")
-	s2 := NewService("service B")
-
-	//服务A
-	g.Go(func() error {
-		return s1.Start()
-	})
-	g.Go(func() error {
-		<-ctx.Done()
-		return s1.Stop()
-	})
-
-	//服务B
-	g.Go(func() error {
-		return s2.Start()
-	})
-	g.Go(func() error {
-		<-ctx.Done()
-		return s2.Stop()
-	})
+	serviceList := NewServiceList("service A", "service B")
+	for _, s := range serviceList {
+		s := s
+		g.Go(func() error {
+			return s.Start()
+		})
+		g.Go(func() error {
+			<-ctx.Done()
+			return s.Stop()
+		})
+	}
 
 	//信号处理
 	g.Go(func() error {
