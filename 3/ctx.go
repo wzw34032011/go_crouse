@@ -24,53 +24,38 @@ func init() {
 	signal.Notify(signalChan, signals...)
 }
 
-func service1Start(ctx context.Context) error {
-	log.Println("服务1启动中...")
-	//return errors.New("服务1启动异常")
-	log.Println("服务1启动成功")
+type service struct {
+	name     string
+	stopChan chan struct{}
+	err      error
+}
+
+func NewService(name string) *service {
+	return &service{name: name, stopChan: make(chan struct{}), err: nil}
+}
+
+func (s service) Start() error {
+	//return errors.New("启动异常")
+	log.Printf("%s启动中...", s.name)
+	log.Printf("%s启动成功", s.name)
 
 	for {
 		time.Sleep(time.Second)
 		//do service
-		log.Println("service1 running...")
+		log.Printf("%s running...", s.name)
 
 		select {
-		case <-ctx.Done():
-			log.Println("服务1已关闭")
-			return ctx.Err()
+		case <-s.stopChan:
+			log.Printf("%s已关闭", s.name)
+			return s.err
 		default:
 		}
 	}
 }
 
-func service1Stop(cancel context.CancelFunc) error {
-	log.Println("服务1关闭中...")
-	cancel()
-	return nil
-}
-
-func service2Start(ctx context.Context) error {
-	log.Println("服务2启动中...")
-	//return errors.New("服务2启动异常")
-	log.Println("服务2启动成功")
-
-	for {
-		time.Sleep(time.Second)
-		//do service
-		log.Println("service2 running...")
-
-		select {
-		case <-ctx.Done():
-			log.Println("服务2已关闭")
-			return ctx.Err()
-		default:
-		}
-	}
-}
-
-func service2Stop(cancel context.CancelFunc) error {
-	log.Println("服务2关闭中...")
-	cancel()
+func (s service) Stop() error {
+	log.Printf("%s关闭中...", s.name)
+	close(s.stopChan)
 	return nil
 }
 
@@ -78,23 +63,25 @@ func main() {
 	rootCtx, rootCancel := context.WithCancel(context.Background())
 	g, ctx := errgroup.WithContext(rootCtx)
 
-	service1Ctx, service1Cancel := context.WithCancel(ctx)
-	service2Ctx, service2Cancel := context.WithCancel(ctx)
+	s1 := NewService("service A")
+	s2 := NewService("service B")
 
+	//服务A
 	g.Go(func() error {
-		return service1Start(service1Ctx)
+		return s1.Start()
 	})
 	g.Go(func() error {
 		<-ctx.Done()
-		return service1Stop(service1Cancel)
+		return s1.Stop()
 	})
 
+	//服务B
 	g.Go(func() error {
-		return service2Start(service2Ctx)
+		return s2.Start()
 	})
 	g.Go(func() error {
 		<-ctx.Done()
-		return service2Stop(service2Cancel)
+		return s2.Stop()
 	})
 
 	g.Go(func() error {
