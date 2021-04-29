@@ -37,7 +37,6 @@ func NewService(name string) *service {
 func (s service) Start() error {
 	//return errors.New("启动异常")
 	log.Printf("%s启动中...", s.name)
-	log.Printf("%s启动成功", s.name)
 
 	for {
 		time.Sleep(time.Second)
