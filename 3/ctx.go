@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"golang.org/x/sync/errgroup"
 	"log"
 	"os"
@@ -43,7 +44,7 @@ func (s *service) Start() error {
 	for {
 		time.Sleep(time.Second)
 		log.Printf("%s running...", s.name)
-		//s.err = errors.New("运行异常")
+		s.err = errors.New("运行中出现异常")
 
 		select {
 		case <-s.stopChan:
