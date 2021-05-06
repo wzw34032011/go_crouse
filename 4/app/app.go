@@ -57,6 +57,7 @@ func NewApp(name, version string, optionFuns ...OptFun) *App {
 		version: version,
 		option: option{
 			signals: exitSignals,
+			meta:    make(map[string]string),
 		},
 	}
 
@@ -91,7 +92,6 @@ func (app *App) Run() {
 			case s := <-signalChan:
 				for _, exitSig := range exitSignals {
 					if s == exitSig {
-						close(signalChan)
 						app.Stop()
 					}
 				}

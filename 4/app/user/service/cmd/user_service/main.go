@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"go_crouse/4/app"
+	"go_crouse/4/app/user/service/internal/server"
 )
 
 // go build -ldflags "-X main.Version=x.y.z"
@@ -25,7 +26,10 @@ func main() {
 		Name,
 		Version,
 		app.AddMeta("env", "test"),
-		app.AddServer(),
+		app.AddServer(
+			server.NewService1(),
+			server.NewService2(),
+		),
 	)
 
 	app.Run()
