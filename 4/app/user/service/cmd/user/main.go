@@ -3,7 +3,10 @@ package main
 import (
 	"flag"
 	"go_crouse/4/app"
+	"go_crouse/4/app/user/service/internal/biz"
+	"go_crouse/4/app/user/service/internal/data"
 	"go_crouse/4/app/user/service/internal/server"
+	"go_crouse/4/app/user/service/internal/service"
 )
 
 // go build -ldflags "-X main.Version=x.y.z"
@@ -21,13 +24,16 @@ func init() {
 }
 
 func main() {
+	ud := data.NewUserData()
+	ub := biz.NewUserBiz(ud)
+	us := service.NewUserService(ub)
 
 	app := app.NewApp(
 		Name,
 		Version,
 		app.AddMeta("env", "test"),
 		app.AddServer(
-			server.NewService1(),
+			server.NewService1(us),
 			server.NewService2(),
 		),
 	)

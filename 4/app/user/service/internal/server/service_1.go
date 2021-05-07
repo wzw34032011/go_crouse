@@ -3,6 +3,8 @@ package server
 import (
 	"context"
 	"github.com/gin-gonic/gin"
+	v1 "go_crouse/4/api/user/v1"
+	"go_crouse/4/app/user/service/internal/service"
 	"log"
 	"net/http"
 	"time"
@@ -12,19 +14,14 @@ type s1 struct {
 	httpServer *http.Server
 }
 
-func NewService1() *s1 {
-	//todo 通过service加载handler
+func NewService1(us *service.UserService) *s1 {
 	g := gin.Default()
-	g.GET("/hello", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "ok",
-		})
-	})
+	handler := v1.HttpHandler(g, us)
 
 	return &s1{
 		httpServer: &http.Server{
 			Addr:    ":8080",
-			Handler: g,
+			Handler: handler,
 		},
 	}
 }
