@@ -2,11 +2,16 @@ package biz
 
 import (
 	"context"
-	"go_crouse/4/app/user/service/internal/data"
 	"log"
 )
 
-func (ub *UserBiz) AddUser(ctx context.Context) {
-	log.Println("biz-Adduser")
-	ub.data.AddUser(ctx, data.UserModel{})
+type UserInfo struct {
+	Id   int
+	Name string
+	Age  int
+}
+
+func (ub *UserBiz) AddUser(ctx context.Context, user *UserInfo) error {
+	log.Println(user)
+	return ub.data.AddUser(ctx, user)
 }

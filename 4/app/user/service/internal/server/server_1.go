@@ -10,15 +10,15 @@ import (
 	"time"
 )
 
-type s1 struct {
+type Server1 struct {
 	httpServer *http.Server
 }
 
-func NewService1(us *service.UserService) *s1 {
+func NewService1(us *service.UserService) *Server1 {
 	g := gin.Default()
 	handler := v1.HttpHandler(g, us)
 
-	return &s1{
+	return &Server1{
 		httpServer: &http.Server{
 			Addr:    ":8080",
 			Handler: handler,
@@ -26,12 +26,12 @@ func NewService1(us *service.UserService) *s1 {
 	}
 }
 
-func (s *s1) Start() error {
+func (s *Server1) Start() error {
 	log.Println("service1 启动")
 	return s.httpServer.ListenAndServe()
 }
 
-func (s *s1) Stop() error {
+func (s *Server1) Stop() error {
 	log.Println("service1 关闭")
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()

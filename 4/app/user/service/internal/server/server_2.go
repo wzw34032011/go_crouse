@@ -8,11 +8,11 @@ import (
 	"time"
 )
 
-type s2 struct {
+type Server_2 struct {
 	httpServer *http.Server
 }
 
-func NewService2() *s2 {
+func NewService2() *Server_2 {
 	//todo 通过service加载handler
 	g := gin.Default()
 	g.GET("/hello", func(c *gin.Context) {
@@ -21,7 +21,7 @@ func NewService2() *s2 {
 		})
 	})
 
-	return &s2{
+	return &Server_2{
 		httpServer: &http.Server{
 			Addr:    ":8081",
 			Handler: g,
@@ -29,12 +29,12 @@ func NewService2() *s2 {
 	}
 }
 
-func (s *s2) Start() error {
+func (s *Server_2) Start() error {
 	log.Println("service2 启动")
 	return s.httpServer.ListenAndServe()
 }
 
-func (s *s2) Stop() error {
+func (s *Server_2) Stop() error {
 	log.Println("service2 关闭")
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()

@@ -1,7 +1,8 @@
 package v1
 
 type AddUserReq struct {
-	name string
+	Name string
+	Age  int
 }
 
 type AddUserReply struct {

@@ -19,7 +19,7 @@ func HttpHandler(g *gin.Engine, us UserHandler) http.Handler {
 
 	g.POST("user.v1/AddUser", func(context *gin.Context) {
 		req := &AddUserReq{
-			name: context.PostForm("name"),
+			Name: context.PostForm("name"),
 		}
 		rep, err := us.AddUser(context, req)
 		if err != nil {

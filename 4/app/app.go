@@ -51,9 +51,9 @@ func AddServer(s ...Server) OptFun {
 	}
 }
 
-func NewApp(name, version string, optionFuns ...OptFun) *App {
+func NewApp(version string, optionFuns ...OptFun) *App {
 	app := &App{
-		name:    name,
+		name:    "test",
 		version: version,
 		option: option{
 			signals: exitSignals,

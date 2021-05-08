@@ -1,12 +1,22 @@
 package biz
 
-import "go_crouse/4/app/user/service/internal/data"
+import (
+	"context"
+	"github.com/google/wire"
+)
+
+var ProviderSet = wire.NewSet(NewUserBiz)
 
 type UserBiz struct {
-	data *data.UserData
+	data UserRepo
 }
 
-func NewUserBiz(data *data.UserData) *UserBiz {
+type UserRepo interface {
+	AddUser(ctx context.Context, info *UserInfo) error
+	GetUser(ctx context.Context, id int) (*UserInfo, error)
+}
+
+func NewUserBiz(data UserRepo) *UserBiz {
 	return &UserBiz{
 		data: data,
 	}
