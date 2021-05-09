@@ -15,12 +15,12 @@ import (
 
 // Injectors from wire.go:
 
-func initApp(version string) *app.App {
-	userData := data.NewUserData()
-	userBiz := biz.NewUserBiz(userData)
+func initApp(name string) *app.App {
+	userRepo := data.NewUserData()
+	userBiz := biz.NewUserBiz(userRepo)
 	userService := service.NewUserService(userBiz)
 	server1 := server.NewService1(userService)
 	server_2 := server.NewService2()
-	appApp := NewApp(version, server1, server_2)
+	appApp := NewApp(name, server1, server_2)
 	return appApp
 }

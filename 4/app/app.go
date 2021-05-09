@@ -51,10 +51,10 @@ func AddServer(s ...Server) OptFun {
 	}
 }
 
-func NewApp(version string, optionFuns ...OptFun) *App {
+func NewApp(name string, optionFuns ...OptFun) *App {
 	app := &App{
-		name:    "test",
-		version: version,
+		name:    name,
+		version: "1.0",
 		option: option{
 			signals: exitSignals,
 			meta:    make(map[string]string),

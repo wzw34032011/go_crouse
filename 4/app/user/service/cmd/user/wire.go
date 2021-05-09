@@ -11,6 +11,6 @@ import (
 	"go_crouse/4/app/user/service/internal/service"
 )
 
-func initApp(version string) *app.App {
+func initApp(name string) *app.App {
 	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, NewApp))
 }
