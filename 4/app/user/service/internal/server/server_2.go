@@ -13,7 +13,6 @@ type Server_2 struct {
 }
 
 func NewService2() *Server_2 {
-	//todo 通过service加载handler
 	g := gin.Default()
 	g.GET("/hello", func(c *gin.Context) {
 		c.JSON(200, gin.H{

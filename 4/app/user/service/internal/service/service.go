@@ -5,11 +5,11 @@ import (
 	"go_crouse/4/app/user/service/internal/biz"
 )
 
+var ProviderSet = wire.NewSet(NewUserService)
+
 type UserService struct {
 	Biz *biz.UserBiz
 }
-
-var ProviderSet = wire.NewSet(NewUserService)
 
 func NewUserService(biz *biz.UserBiz) *UserService {
 	return &UserService{
