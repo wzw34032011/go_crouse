@@ -3,6 +3,7 @@ module go_crouse
 go 1.15
 
 require (
+	entgo.io/ent v0.8.0 // indirect
 	github.com/gin-gonic/gin v1.7.1
 	github.com/go-playground/validator/v10 v10.5.0 // indirect
 	github.com/go-redis/redis v6.15.9+incompatible
