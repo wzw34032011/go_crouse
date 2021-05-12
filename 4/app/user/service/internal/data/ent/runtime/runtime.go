@@ -2,7 +2,7 @@
 
 package runtime
 
-// The schema-stitching logic is generated in go_crouse/ent_test/ent/runtime.go
+// The schema-stitching logic is generated in go_crouse/4/app/user/service/internal/data/ent/runtime.go
 
 const (
 	Version = "v0.8.0"                                          // Version of ent codegen.

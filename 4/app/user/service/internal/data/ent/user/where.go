@@ -3,7 +3,7 @@
 package user
 
 import (
-	"go_crouse/ent_test/ent/predicate"
+	"go_crouse/4/app/user/service/internal/data/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 )

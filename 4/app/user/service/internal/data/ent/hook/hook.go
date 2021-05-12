@@ -5,7 +5,7 @@ package hook
 import (
 	"context"
 	"fmt"
-	"go_crouse/ent_test/ent"
+	"go_crouse/4/app/user/service/internal/data/ent"
 )
 
 // The UserFunc type is an adapter to allow the use of ordinary

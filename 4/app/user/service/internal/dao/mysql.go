@@ -1,9 +1,10 @@
 package dao
 
 import (
-	"database/sql"
+	"entgo.io/ent/dialect"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"go_crouse/4/app/user/service/internal/data/ent"
 	"log"
 )
 
@@ -16,16 +17,16 @@ type MysqlConf struct {
 	network  string
 }
 
-func InitMysql(c *MysqlConf) {
-	dsn := fmt.Sprintf("%s:%s@%s(%s:%d)/%s", c.username, c.password, c.network, c.server, c.port, c.database)
-	MysqlDb, error := sql.Open("mysql", dsn)
-	if error != nil {
-		log.Fatalln(error.Error())
+func InitMyClient(c *MysqlConf) {
+	client, err := ent.Open(dialect.MySQL, fmt.Sprintf("%s:%s@%s(%s:%d)/%s", c.username, c.password, c.network, c.server, c.port, c.database))
+	if err != nil {
+		log.Fatalln(err.Error())
 	}
-	DB = MysqlDb
+	DbClient = client
 
-	/*error = DB.Ping()
-	if error != nil{
-		log.Fatalln(error.Error())
+	//初始化user表
+	/*err = client.Schema.Create(context.Background())
+	if err != nil {
+		log.Fatal(err)
 	}*/
 }

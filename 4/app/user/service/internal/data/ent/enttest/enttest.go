@@ -4,9 +4,9 @@ package enttest
 
 import (
 	"context"
-	"go_crouse/ent_test/ent"
+	"go_crouse/4/app/user/service/internal/data/ent"
 	// required by schema hooks.
-	_ "go_crouse/ent_test/ent/runtime"
+	_ "go_crouse/4/app/user/service/internal/data/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
 )

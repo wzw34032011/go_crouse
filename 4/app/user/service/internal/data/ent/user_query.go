@@ -6,8 +6,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"go_crouse/ent_test/ent/predicate"
-	"go_crouse/ent_test/ent/user"
+	"go_crouse/4/app/user/service/internal/data/ent/predicate"
+	"go_crouse/4/app/user/service/internal/data/ent/user"
 	"math"
 
 	"entgo.io/ent/dialect/sql"

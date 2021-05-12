@@ -8,7 +8,7 @@ import (
 type UserInfo struct {
 	Id   int
 	Name string
-	Age  int
+	Age  int8
 }
 
 func (ub *UserBiz) AddUser(ctx context.Context, user *UserInfo) error {

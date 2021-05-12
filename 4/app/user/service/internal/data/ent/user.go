@@ -4,7 +4,7 @@ package ent
 
 import (
 	"fmt"
-	"go_crouse/ent_test/ent/user"
+	"go_crouse/4/app/user/service/internal/data/ent/user"
 	"strings"
 
 	"entgo.io/ent/dialect/sql"

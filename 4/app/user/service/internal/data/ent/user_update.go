@@ -5,8 +5,8 @@ package ent
 import (
 	"context"
 	"fmt"
-	"go_crouse/ent_test/ent/predicate"
-	"go_crouse/ent_test/ent/user"
+	"go_crouse/4/app/user/service/internal/data/ent/predicate"
+	"go_crouse/4/app/user/service/internal/data/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

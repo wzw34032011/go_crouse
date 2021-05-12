@@ -3,8 +3,8 @@
 package ent
 
 import (
-	"go_crouse/ent_test/ent/schema"
-	"go_crouse/ent_test/ent/user"
+	"go_crouse/4/app/user/service/internal/data/ent/schema"
+	"go_crouse/4/app/user/service/internal/data/ent/user"
 )
 
 // The init function reads all schema descriptors with runtime code
